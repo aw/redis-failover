@@ -1,7 +1,7 @@
 ## Usage Options:
-  -m    start redis-server as a MASTER
-  -s    start redis-server as a SLAVE
-  -k    stop all redis-servers
+-   -m    start redis-server as a MASTER
+-   -s    start redis-server as a SLAVE
+-   -k    stop all redis-servers
 
 ## Tested:
 
