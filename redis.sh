@@ -11,11 +11,15 @@
 #   -s    start redis-server as a SLAVE
 #   -k    stop all redis-servers
 #
+# Tested:
+#
+#   - Redis 1.02
+#   - Keepalived 1.1.19
+#
 # Redis Setup:
 #
 #   useradd -m -U redis
 #   chmod 750 /home/redis
-#   echo "172.16.0.180    dbwrite-pool-1" >> /etc/hosts
 #
 # Configurations:
 #
@@ -33,10 +37,7 @@
 # Note:
 #
 #   *This has NOT been tested in a production environment, use at your own risk*
-#
-###############
 
-        
 #########################
 # User Defined Variables
 #########################
