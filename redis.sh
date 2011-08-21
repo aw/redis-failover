@@ -4,7 +4,7 @@
 #
 # (c) Alex Williams - 2009 - www.alexwilliams.ca
 #
-# v0.1
+# v0.2
 #
 # Usage Options:
 #   -m    start redis-server as a MASTER
@@ -13,13 +13,18 @@
 #
 # Tested:
 #
-#   - Redis 1.02
-#   - Keepalived 1.1.19
+#   - Redis 2.2.12
+#   - Keepalived 1.1.20
 #
 # Redis Setup:
 #
 #   useradd -m -U redis
 #   chmod 750 /home/redis
+#   cd /home/redis
+#   sudo -u redis git clone https://github.com/antirez/redis.git redis.git
+#   cd redis.git
+#   git checkout 2.2.12
+#   sudo make
 #
 # Configurations:
 #
@@ -43,7 +48,7 @@
 #########################
 
 REDIS_HOME="/home/redis"
-REDIS_COMMANDS="/home/redis/redis-1.02/src"     # The location of the redis binary
+REDIS_COMMANDS="/home/redis/redis.git/src"      # The location of the redis binary
 REDIS_MASTER_PORT="6379"                        # Redis MASTER port
 REDIS_MASTER_CONF="redis-mdb.conf"              # Filename of MASTER config
 REDIS_SLAVE_PORT="6380"                         # Redis SLAVE port
@@ -82,13 +87,12 @@ start_slave() {
 }
 
 kill_redis() {
-        #${REDIS_COMMANDS}/redis-cli -p ${REDIS_MASTER_PORT} shutdown
-        #${REDIS_COMMANDS}/redis-cli -p ${REDIS_SLAVE_PORT} shutdown
-        killall -9 redis-server
+        ${REDIS_COMMANDS}/redis-cli -p ${REDIS_MASTER_PORT} shutdown
+        ${REDIS_COMMANDS}/redis-cli -p ${REDIS_SLAVE_PORT} shutdown
 }
 
 usage() {
-        echo -e "Start/Stop Redis Instances - version 0.1 (c) Alex Williams - www.alexwilliams.ca"
+        echo -e "Start/Stop Redis Instances - version 0.2 (c) Alex Williams - www.alexwilliams.ca"
         echo -e "\nOptions: "
         echo -e "\t-m\tstart redis-server as a MASTER"
         echo -e "\t-s\tstart redis-server as a SLAVE"
