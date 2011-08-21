@@ -5,13 +5,18 @@
 
 ## Tested:
 
-- Redis 1.02
-- Keepalived 1.1.19
+- Redis 2.2.12
+- Keepalived 1.1.20
 
 ## Redis Setup:
 
     useradd -m -U redis
     chmod 750 /home/redis
+    cd /home/redis
+    sudo -u redis git clone https://github.com/antirez/redis.git redis.git
+    cd redis.git
+    git checkout 2.2.12
+    sudo make
 
 ## Configurations:
 
