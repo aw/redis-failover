@@ -1,7 +1,7 @@
 ## Usage Options:
--   -m    start redis-server as a MASTER
--   -s    start redis-server as a SLAVE
--   -k    stop all redis-servers
+-   -m    promote the redis-server to MASTER
+-   -s    promote the redis-server to SLAVE
+-   -k    start the redis-server and promote it to MASTER
 
 ## Tested:
 
@@ -20,16 +20,15 @@
 
 ## Configurations:
 
-- Master config: /home/redis/redis-mdb.conf (runs on port 6379)
-- Slave config:  /home/redis/redis-mdbslave.conf (runs on port 6380)
+- MASTER/SLAVE config: /home/redis/redis-mdb.conf (runs on port 6379)
 
 ## How it works:
 
-- Keepalived runs on the Redis Master and Slave servers
-- The Redis Master binds the IP 172.16.0.180
-- The Redis Slave connects to a Master server which has the IP 172.16.0.180
+- Keepalived runs on the Redis MASTER and SLAVE servers
+- The Redis MASTER binds the IP 172.16.0.180
+- The Redis SLAVE connects to a Master server which has the IP 172.16.0.180
 - Keepalived handles checking and runs a script if a server is online or offline
-- This script will handle starting/stopping the Redis instance as a Master/Slave
+- This script will handle starting Redis promoting it to MASTER or SLAVE
 
 ## Note:
 

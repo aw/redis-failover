@@ -1,15 +1,15 @@
 #!/bin/sh
 #
-# Script to start/stop a Redis instance as Master/Slave
+# Script to start Redis and promote to MASTER/SLAVE
 #
 # (c) Alex Williams - 2009 - www.alexwilliams.ca
 #
-# v0.2
+# v0.3
 #
 # Usage Options:
-#   -m    start redis-server as a MASTER
-#   -s    start redis-server as a SLAVE
-#   -k    stop all redis-servers
+#   -m    promote the redis-server to MASTER
+#   -s    promote the redis-server to SLAVE
+#   -k    start the redis-server and promote it to MASTER
 #
 # Tested:
 #
@@ -28,16 +28,15 @@
 #
 # Configurations:
 #
-#   Master config: /home/redis/redis-mdb.conf (runs on port 6379)
-#   Slave config:  /home/redis/redis-mdbslave.conf (runs on port 6380)
+#   MASTER/SLAVE config: /home/redis/redis-mdb.conf (runs on port 6379)
 #
 # How it works:
 #
-#   - Keepalived runs on the Redis Master and Slave servers
-#   - The Redis Master binds the IP 172.16.0.180
-#   - The Redis Slave connects to a Master server which has the IP 172.16.0.180
+#   - Keepalived runs on the Redis MASTER and SLAVE servers
+#   - The Redis MASTER binds the IP 172.16.0.180
+#   - The Redis SLAVE connects to a Master server which has the IP 172.16.0.180
 #   - Keepalived handles checking and runs a script if a server is online or offline
-#   - This script will handle starting/stopping the Redis instance as a Master/Slave
+#   - This script will handle starting Redis promoting it to MASTER or SLAVE
 #
 # Note:
 #
@@ -49,10 +48,9 @@
 
 REDIS_HOME="/home/redis"
 REDIS_COMMANDS="/home/redis/redis.git/src"      # The location of the redis binary
+REDIS_MASTER_IP="172.16.0.180"                  # Redis MASTER ip
 REDIS_MASTER_PORT="6379"                        # Redis MASTER port
-REDIS_MASTER_CONF="redis-mdb.conf"              # Filename of MASTER config
-REDIS_SLAVE_PORT="6380"                         # Redis SLAVE port
-REDIS_SLAVE_CONF="redis-mdbslave.conf"          # Filename of SLAVE config
+REDIS_CONF="redis-mdb.conf"                     # Filename of MASTER config
 
 ##############
 # Exit Codes
@@ -74,29 +72,27 @@ error() {
         exit $E_CODE
 }
 
+start_redis() {
+      alive=`${REDIS_COMMANDS}/redis-cli PING`
+      if [ "$alive" != "PONG" ]; then
+        ${REDIS_COMMANDS}/redis-server ${REDIS_HOME}/${REDIS_CONF}
+      fi
+}
+
 start_master() {
-        kill_redis
-        wait
-        ${REDIS_COMMANDS}/redis-server ${REDIS_HOME}/${REDIS_MASTER_CONF}
+        ${REDIS_COMMANDS}/redis-cli SLAVEOF no one
 }
 
 start_slave() {
-        kill_redis
-        wait
-        ${REDIS_COMMANDS}/redis-server ${REDIS_HOME}/${REDIS_SLAVE_CONF}
-}
-
-kill_redis() {
-        ${REDIS_COMMANDS}/redis-cli -p ${REDIS_MASTER_PORT} shutdown
-        ${REDIS_COMMANDS}/redis-cli -p ${REDIS_SLAVE_PORT} shutdown
+        ${REDIS_COMMANDS}/redis-cli SLAVEOF ${REDIS_MASTER_IP} ${REDIS_MASTER_PORT}
 }
 
 usage() {
-        echo -e "Start/Stop Redis Instances - version 0.2 (c) Alex Williams - www.alexwilliams.ca"
+        echo -e "Start Redis and promote to MASTER/SLAVE - version 0.3 (c) Alex Williams - www.alexwilliams.ca"
         echo -e "\nOptions: "
-        echo -e "\t-m\tstart redis-server as a MASTER"
-        echo -e "\t-s\tstart redis-server as a SLAVE"
-        echo -e "\t-k\tstop all redis-servers"
+        echo -e "\t-m\tpromote the redis-server to MASTER"
+        echo -e "\t-s\tpromote the redis-server to SLAVE"
+        echo -e "\t-k\tstart the redis-server and promote it to MASTER"
         echo -e ""
 
         exit $E_INVALID_ARGS
@@ -113,14 +109,17 @@ do
 done
 
 if [ $arg_m ]; then
-        echo -e "Starting redis-server as a MASTER\n"
+        echo -e "Promoting redis-server to MASTER\n"
+        start_redis
         start_master
 elif [ $arg_s ]; then
-        echo -e "Starting redis-server as a SLAVE\n"
+        echo -e "Promoting redis-server to SLAVE\n"
+        start_redis
         start_slave
 elif [ $arg_k ]; then
-        echo -e "Killing all redis-servers\n"
-        kill_redis
+        echo -e "Starting redis-server and promoting to MASTER\n"
+        start_redis
+        start_master
 else
         usage
 fi
