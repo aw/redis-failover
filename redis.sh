@@ -111,14 +111,17 @@ done
 if [ $arg_m ]; then
         echo -e "Promoting redis-server to MASTER\n"
         start_redis
+        wait
         start_master
 elif [ $arg_s ]; then
         echo -e "Promoting redis-server to SLAVE\n"
         start_redis
+        wait
         start_slave
 elif [ $arg_k ]; then
         echo -e "Starting redis-server and promoting to MASTER\n"
         start_redis
+        wait
         start_master
 else
         usage
