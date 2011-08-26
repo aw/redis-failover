@@ -76,6 +76,7 @@ start_redis() {
       alive=`${REDIS_COMMANDS}/redis-cli PING`
       if [ "$alive" != "PONG" ]; then
         ${REDIS_COMMANDS}/redis-server ${REDIS_HOME}/${REDIS_CONF}
+        sleep 1
       fi
 }
 
