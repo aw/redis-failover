@@ -1,0 +1,16 @@
+#
+# /etc/xinetd.d/redis-xinetd
+#
+service redis_status
+{
+        flags           = REUSE
+        socket_type     = stream
+        port            = 9400
+        wait            = no
+        user            = nobody
+        server          = /opt/check_redis.sh
+        log_on_failure  += USERID
+        disable         = no
+        only_from       = 172.16.0.0/24 # recommended to put the IPs that need
+                                    # to connect exclusively (security purposes)
+}
