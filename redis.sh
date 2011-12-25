@@ -2,7 +2,7 @@
 #
 # Script to start Redis and promote to MASTER/SLAVE
 #
-# (c) Alex Williams - 2009 - www.alexwilliams.ca
+# Copyright (c) 2011 Alex Williams. See LICENSE for details.
 #
 # v0.3
 #

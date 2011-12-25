@@ -33,3 +33,7 @@
 ## Note:
 
 *This has NOT been tested in a production environment, use at your own risk*
+
+## Copyright
+
+Copyright (c) 2011 Alex Williams. See LICENSE for details.
